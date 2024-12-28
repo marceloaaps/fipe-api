@@ -1,5 +1,6 @@
 package br.com.marceloaaps.fipe_api;
 
+import br.com.marceloaaps.fipe_api.view.Menu;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +15,7 @@ public class FipeApiApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-
+		Menu menu = new Menu();
+		menu.showMenu();
 	}
 }
