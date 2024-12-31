@@ -1,11 +1,14 @@
 package br.com.marceloaaps.fipe_api.service;
 
 
+import br.com.marceloaaps.fipe_api.model.BrandData;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 public class FipeApiConn {
 
@@ -24,5 +27,13 @@ public class FipeApiConn {
         }
 
         return response.body();
+    }
+
+    public static String findBrandCode(List<BrandData> brandDataList, String brandCode) {
+        return brandDataList.stream()
+                .filter(brandData -> brandData.code().equals(brandCode))
+                .findFirst()
+                .map(BrandData::code)
+                .orElse("Argumento não encontrado");
     }
 }

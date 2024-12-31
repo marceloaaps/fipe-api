@@ -1,10 +1,13 @@
 package br.com.marceloaaps.fipe_api.view;
 
 import br.com.marceloaaps.fipe_api.model.BrandData;
+import br.com.marceloaaps.fipe_api.model.CarData;
+import br.com.marceloaaps.fipe_api.model.ModelData;
 import br.com.marceloaaps.fipe_api.service.DataConverter;
 import br.com.marceloaaps.fipe_api.service.FipeApiConn;
 import com.fasterxml.jackson.core.type.TypeReference;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,12 +36,11 @@ public class Menu {
             throw new IllegalArgumentException("Argumento ilegal encontrado.");
         }
 
-
         address = validOptions.getOrDefault(address, "seila");
         var json = fipeApiConn.obterDados(ENDERECO + address + "/marcas");
 
         DataConverter dataConverter = new DataConverter();
-        ;
+
         List<BrandData> brandDataList = dataConverter.obterDados(json, new TypeReference<>() {
         });
 
@@ -47,13 +49,45 @@ public class Menu {
         System.out.println("Das Marcas acima, digite o código de qual você deseja: ");
         String brandCode = sc.next();
 
-        String x = brandDataList.stream().filter(brandData -> brandData.code().equals(brandCode)).
+        String vehicleBrandCode = brandDataList.stream().filter(brandData -> brandData.code().equals(brandCode)).
                 findFirst()
-                .map(BrandData::toString)
+                .map(BrandData::code)
                 .orElse("Marca não encontrada.");
 
-        System.out.println(x);
+        json = fipeApiConn.obterDados(ENDERECO + address + "/marcas/" + vehicleBrandCode + "/modelos");
 
+        ModelData vehicleModelList = dataConverter.obterDados(json, new TypeReference<>() {
+        });
+
+        System.out.println(vehicleModelList);
+
+        System.out.println("Digite o codigo desejado do veículo: ");
+        String modelCode = sc.next();
+
+        String vehicleModelCode = FipeApiConn.findBrandCode(vehicleModelList.model(), modelCode);
+
+        System.out.println(vehicleModelCode);
+
+        json = fipeApiConn.obterDados(ENDERECO + address + "/marcas/" + vehicleBrandCode + "/modelos/" + vehicleModelCode + "/anos");
+        System.out.println(json);
+
+        brandDataList = dataConverter.obterDados(json, new TypeReference<>() {
+        });
+
+        brandDataList.forEach(System.out::println);
+
+        System.out.println("Dos anos acima  acima, digite o código de qual você deseja: ");
+        String aBrandCode = sc.next();
+
+        String vehicleYearCode = FipeApiConn.findBrandCode(brandDataList, aBrandCode);
+
+        json = fipeApiConn.obterDados(ENDERECO + address + "/marcas/" + vehicleBrandCode + "/modelos/"
+                + vehicleModelCode + "/anos/" + vehicleYearCode);
+
+        CarData carInfo = dataConverter.obterDados(json, new TypeReference<>() {
+        });
+
+        System.out.println(carInfo);
 
     }
 }
