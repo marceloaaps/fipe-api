@@ -7,15 +7,13 @@ import br.com.marceloaaps.fipe_api.service.DataConverter;
 import br.com.marceloaaps.fipe_api.service.FipeApiConn;
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Menu {
 
-    //https://parallelum.com.br/fipe/api/v1/carros/marcas/59/modelos
-    private final String ENDERECO = "https://parallelum.com.br/fipe/api/v1/";
+    private static final String ENDERECO = "https://parallelum.com.br/fipe/api/v1/";
     private final FipeApiConn fipeApiConn = new FipeApiConn();
+    private static final String MARCAS = "/marcas/";
 
     private Scanner sc = new Scanner(System.in);
 
@@ -54,7 +52,7 @@ public class Menu {
                 .map(BrandData::code)
                 .orElse("Marca não encontrada.");
 
-        json = fipeApiConn.obterDados(ENDERECO + address + "/marcas/" + vehicleBrandCode + "/modelos");
+        json = fipeApiConn.obterDados(ENDERECO + address + MARCAS + vehicleBrandCode + "/modelos");
 
         ModelData vehicleModelList = dataConverter.obterDados(json, new TypeReference<>() {
         });
@@ -68,7 +66,7 @@ public class Menu {
 
         System.out.println(vehicleModelCode);
 
-        json = fipeApiConn.obterDados(ENDERECO + address + "/marcas/" + vehicleBrandCode + "/modelos/" + vehicleModelCode + "/anos");
+        json = fipeApiConn.obterDados(ENDERECO + address + MARCAS + vehicleBrandCode + "/modelos/" + vehicleModelCode + "/anos");
         System.out.println(json);
 
         brandDataList = dataConverter.obterDados(json, new TypeReference<>() {
@@ -81,7 +79,7 @@ public class Menu {
 
         String vehicleYearCode = FipeApiConn.findBrandCode(brandDataList, aBrandCode);
 
-        json = fipeApiConn.obterDados(ENDERECO + address + "/marcas/" + vehicleBrandCode + "/modelos/"
+        json = fipeApiConn.obterDados(ENDERECO + address + MARCAS + vehicleBrandCode + "/modelos/"
                 + vehicleModelCode + "/anos/" + vehicleYearCode);
 
         CarData carInfo = dataConverter.obterDados(json, new TypeReference<>() {
